@@ -22,6 +22,7 @@ import java.util.concurrent.TimeUnit;
 
 public abstract class AbstractThriftServer {
 
+
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractThriftServer.class);
 
     private static final int threadNum = Math.max(1, Runtime.getRuntime().availableProcessors() * 2);
@@ -29,6 +30,9 @@ public abstract class AbstractThriftServer {
     private TServerSocket serverTransport;
     private ExecutorService servingExecutor;
     private TThreadPoolServer server;
+
+    private final static int DEF_FRAME_SIZE = 16777216;
+    private final static String DEF_SERVER_NAME = "forest_thrift_server";
 
     public void start() {
 
@@ -99,12 +103,16 @@ public abstract class AbstractThriftServer {
         }
     }
 
-    public abstract String getServerName();
+    public String getServerName() {
+        return DEF_SERVER_NAME;
+    }
 
-    protected abstract int getPort();
+    public abstract int getPort();
 
-    protected abstract int getFramedSize();
+    public int getFramedSize() {
+        return DEF_FRAME_SIZE;
+    }
 
-    protected abstract TProcessor getProcessor();
+    public abstract TProcessor getProcessor();
 
 }

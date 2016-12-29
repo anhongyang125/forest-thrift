@@ -15,17 +15,17 @@ public class SampleServer extends AbstractThriftServer {
     }
 
     @Override
-    protected int getPort() {
+    public int getPort() {
         return 7777;
     }
 
     @Override
-    protected int getFramedSize() {
+    public int getFramedSize() {
         return 16777216;
     }
 
     @Override
-    protected TProcessor getProcessor() {
+    public TProcessor getProcessor() {
         return new Sample.Processor(new Sample.Iface() {
 
             @Override

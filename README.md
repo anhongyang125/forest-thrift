@@ -58,5 +58,35 @@ maven依赖
 [更多示例](https://github.com/dempeZheng/forest-thrift/tree/master/thrift-demo)
 
 
+## user guide
 
+1.根据thrift的描述文件生成thrift静态代码
+
+```
+thrift-0.6.1.exe -r -gen java sample.thrift
+```
+
+2.继承AbstractThriftServer，实现getProcessor()方法：
+
+```
+  @Override
+    protected TProcessor getProcessor() {
+        return new Sample.Processor(new Sample.Iface() {
+
+            @Override
+            public String hello(String para) throws TException {
+                return "hello " + para;
+            }
+
+            @Override
+            public boolean ping() throws TException {
+                return true;
+            }
+        });
+    }
+```
+
+ 调用start()方法，启动server
+
+3.基于DefaultThriftClient构造client，并且调用iface方法生成对应的代理对象。
 
