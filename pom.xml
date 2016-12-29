@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.zhizus.forest.thrift</groupId>
+    <groupId>com.zhizus</groupId>
     <artifactId>forest-thrift</artifactId>
     <version>0.0.1</version>
     <packaging>pom</packaging>
@@ -29,7 +29,7 @@
 
     <name>Forest Thrift</name>
     <description>Forest Thrift</description>
-    <url>https://github.com/dempeZheng/thrift-pool-client</url>
+    <url>https://github.com/dempeZheng/forest-thrift</url>
 
 
     <developers>
@@ -40,11 +40,10 @@
             <organizationUrl>http://www.zhizus.com</organizationUrl>
         </developer>
     </developers>
-
     <scm>
-        <connection>scm:git:https://github.com/dempeZheng/thrift-pool-client.git</connection>
-        <url>https://github.com/dempeZheng/thrift-pool-client</url>
-        <developerConnection>scm:git:https://github.com/dempeZheng/thrift-pool-client.git</developerConnection>
+        <connection>scm:git:https://github.com/dempeZheng/forest-thrift.git</connection>
+        <url>https://github.com/dempeZheng/forest-thrift</url>
+        <developerConnection>scm:git:https://github.com/dempeZheng/forest-thrift.git</developerConnection>
     </scm>
 
     <licenses>
