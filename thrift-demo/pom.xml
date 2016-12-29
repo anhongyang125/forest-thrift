@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>forest-thrift</artifactId>
+        <groupId>com.zhizus.forest.thrift</groupId>
+        <version>0.0.1</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>thrift-demo</artifactId>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.zhizus.forest.thrift</groupId>
+            <artifactId>thrift-client</artifactId>
+            <version>0.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.zhizus.forest.thrift</groupId>
+            <artifactId>thrift-server</artifactId>
+            <version>0.0.1</version>
+        </dependency>
+    </dependencies>
+
+
+</project>

@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.zhizus.forest.thrift</groupId>
+    <artifactId>forest-thrift</artifactId>
+    <version>0.0.1</version>
+    <packaging>pom</packaging>
+    <modules>
+        <module>thrift-server</module>
+        <module>thrift-client</module>
+        <module>thrift-demo</module>
+    </modules>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <java.source.jdk>1.7</java.source.jdk>
+        <org.slf4j.version>1.7.5</org.slf4j.version>
+        <apache.curator.version>2.7.1</apache.curator.version>
+        <google.guava.version>18.0</google.guava.version>
+        <commons-pool2.version>2.2</commons-pool2.version>
+        <commons-lang3.version>3.1</commons-lang3.version>
+        <javassist.version>3.18.0-GA</javassist.version>
+        <commons-pool2.version>2.3</commons-pool2.version>
+        <libthrift.version>0.6.1</libthrift.version>
+    </properties>
+
+    <name>Forest Thrift</name>
+    <description>Forest Thrift</description>
+    <url>https://github.com/dempeZheng/thrift-pool-client</url>
+
+
+    <developers>
+        <developer>
+            <name>dempe</name>
+            <email>752996510@qq.com</email>
+            <organization>dempe</organization>
+            <organizationUrl>http://www.zhizus.com</organizationUrl>
+        </developer>
+    </developers>
+
+    <scm>
+        <connection>scm:git:https://github.com/dempeZheng/thrift-pool-client.git</connection>
+        <url>https://github.com/dempeZheng/thrift-pool-client</url>
+        <developerConnection>scm:git:https://github.com/dempeZheng/thrift-pool-client.git</developerConnection>
+    </scm>
+
+    <licenses>
+        <license>
+            <name>The Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.thrift</groupId>
+            <artifactId>libthrift</artifactId>
+            <version>${libthrift.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-log4j12</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>${google.guava.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${org.slf4j.version}</version>
+        </dependency>
+    </dependencies>
+
+    <profiles>
+        <profile>
+            <id>java8</id>
+            <activation>
+                <jdk>1.8</jdk>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>attach-javadocs</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                                <configuration>
+                                    <additionalparam>-Xdoclint:none</additionalparam>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <version>2.2.1</version>
+                        <executions>
+                            <execution>
+                                <id>attach-sources</id>
+                                <goals>
+                                    <goal>jar-no-fork</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>2.9.1</version>
+                        <executions>
+                            <execution>
+                                <id>attach-javadocs</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>1.5</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <!-- http://mvnrepository.com/artifact/org.apache.maven.plugins/maven-compiler-plugin -->
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <version>3.5.1</version>
+                        <!-- Java8 -->
+                        <configuration>
+                            <source>${java.source.jdk}</source>
+                            <target>${java.source.jdk}</target>
+                        </configuration>
+                    </plugin>
+
+                </plugins>
+            </build>
+            <distributionManagement>
+                <snapshotRepository>
+                    <id>ossrh</id>
+                    <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+                </snapshotRepository>
+                <repository>
+                    <id>ossrh</id>
+                    <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+                </repository>
+            </distributionManagement>
+        </profile>
+    </profiles>
+
+    <build>
+        <plugins>
+            <plugin>
+                <!-- http://mvnrepository.com/artifact/org.apache.maven.plugins/maven-compiler-plugin -->
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.5.1</version>
+                <!-- Java8 -->
+                <configuration>
+                    <source>${java.source.jdk}</source>
+                    <target>${java.source.jdk}</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+
+</project>
