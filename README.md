@@ -55,7 +55,7 @@ maven依赖
 
 ## thrift-server
 
-## 更多示例
+[更多示例](https://github.com/dempeZheng/forest-thrift/tree/master/thrift-demo)
 
 
 
