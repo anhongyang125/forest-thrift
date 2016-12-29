@@ -10,19 +10,17 @@
  */
 package com.zhizus.forest.thrift.client;
 
-
 import com.zhizus.forest.thrift.client.cluster.HAStrategy;
 import com.zhizus.forest.thrift.client.cluster.IsolationStrategy;
 import com.zhizus.forest.thrift.client.cluster.LoadBalance;
 import com.zhizus.forest.thrift.client.cluster.ha.FailedFastStrategy;
-import com.zhizus.forest.thrift.client.cluster.loadbalance.RandomLoadBalance;
+import com.zhizus.forest.thrift.client.cluster.ha.FailedOverStrategy;
+import com.zhizus.forest.thrift.client.cluster.loadbalance.*;
 import com.zhizus.forest.thrift.client.cluster.privoder.PooledClusterProvider;
 import com.zhizus.forest.thrift.client.registry.Registry;
 import com.zhizus.forest.thrift.client.registry.RegistryListener;
-import com.zhizus.forest.thrift.client.registry.conf.ConfRegistry;
 import org.apache.commons.pool2.impl.GenericKeyedObjectPoolConfig;
 import org.apache.thrift.TServiceClient;
-import org.apache.thrift.transport.TTransport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,7 +30,7 @@ public class DefaultThriftClient implements RegistryListener<ServerInfo> {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(DefaultThriftClient.class);
 
-    public enum LoadBalanceType {RANDOM, ROBBIN, HASH}
+    public enum LoadBalanceType {RANDOM, ROBBIN, HASH, ACTIVE_WEIGHT, LOCAL_FIRST}
 
     public enum HAStrategyType {FAILED_OVER, FAILED_FAST}
 
@@ -63,17 +61,31 @@ public class DefaultThriftClient implements RegistryListener<ServerInfo> {
             case RANDOM:
                 this.loadBalance = new RandomLoadBalance(registry, infoIsolationStrategy);
                 break;
+            case ROBBIN:
+                this.loadBalance = new RoundRobinLoadBalance(registry, infoIsolationStrategy);
+                break;
+            case HASH:
+                this.loadBalance = new HashLoadBalance(registry, infoIsolationStrategy);
+                break;
+            case ACTIVE_WEIGHT:
+                this.loadBalance = new ActiveWeightLoadBalance(registry, infoIsolationStrategy);
+                break;
+            case LOCAL_FIRST:
+                this.loadBalance = new LocalFirstLoadBalance(registry, infoIsolationStrategy);
+                break;
             default:
                 this.loadBalance = new RandomLoadBalance(registry, infoIsolationStrategy);
         }
         List<ServerInfo> list = registry.list();
         loadBalance.setList(list);
+        this.pooledClusterProvider = new PooledClusterProvider(poolConfig, infoIsolationStrategy, pingValidate);
         switch (haStrategyType) {
             case FAILED_FAST:
-                this.pooledClusterProvider = new PooledClusterProvider(poolConfig, infoIsolationStrategy, pingValidate);
                 this.haStrategy = new FailedFastStrategy<>(pooledClusterProvider);
                 break;
-
+            case FAILED_OVER:
+                this.haStrategy = new FailedOverStrategy<>(pooledClusterProvider);
+                break;
             default:
                 this.pooledClusterProvider = new PooledClusterProvider(poolConfig, infoIsolationStrategy, pingValidate);
                 this.haStrategy = new FailedFastStrategy<>(pooledClusterProvider);
@@ -101,7 +113,7 @@ public class DefaultThriftClient implements RegistryListener<ServerInfo> {
     public void onFresh() {
         try {
             List<ServerInfo> list = registry.list();
-            if(list!=null&&!list.isEmpty()){
+            if (list != null && !list.isEmpty()) {
                 loadBalance.setList(list);
             }
         } catch (Exception e) {
@@ -114,28 +126,5 @@ public class DefaultThriftClient implements RegistryListener<ServerInfo> {
         // 当key从配置中心移除时，主动清除连接池里面配置
         pooledClusterProvider.clear(serverInfo);
     }
-
-    public static void main(String[] args) throws Exception {
-
-        // 连接池配置，
-        GenericKeyedObjectPoolConfig poolConfig = new GenericKeyedObjectPoolConfig();
-
-        // 校验接口，连接池的validateObject方法会调用到这里的ping方法
-        // 这里主要用于对thrift描述文件层面的心跳校验支持
-        PingValidate pingValidate = new PingValidate() {
-            @Override
-            public boolean ping(ServerInfo key, TTransport transport) {
-                return true;
-            }
-        };
-        // 客户端熔断策略，默认1min中10次异常则自动熔断，恢复时间也为1min中
-        IsolationStrategy<ServerInfo> infoIsolationStrategy = new IsolationStrategy<>();
-
-        DefaultThriftClient thriftClient = new DefaultThriftClient(LoadBalanceType.RANDOM, HAStrategyType.FAILED_FAST,
-                new ConfRegistry("localhost:9999"), poolConfig, pingValidate, infoIsolationStrategy);
-        //每次使用client请调用iface接口，这里通过代理模式包装了异常统计和回池操作，一个 iface生成的代理对象调用多次会出现问题
-        //  thriftClient.iface(YourThrift.class);
-    }
-
 
 }
