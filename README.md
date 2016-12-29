@@ -21,7 +21,7 @@ maven依赖
 
 ```xml
 <dependency>
-    <groupId>com.zhizus.forest.thrift</groupId>
+    <groupId>com.zhizus</groupId>
     <artifactId>thrift-client</artifactId>
     <version>0.0.1</version>
 </dependency>
